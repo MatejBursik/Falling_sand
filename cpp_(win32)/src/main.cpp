@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <tchar.h>
 #include <windows.h>
 #include <stdint.h>
 
@@ -18,7 +19,8 @@ vector<int> getMouse() {
     vector<int> out;
     POINT mousePos;
     GetCursorPos(&mousePos);
-    out.push_back(mousePos.x, mousePos.y);
+    out.push_back(mousePos.x);
+    out.push_back(mousePos.y);
     return out;
 }
 
@@ -109,23 +111,30 @@ LRESULT CALLBACK WindowProcedure(HWND window, UINT msg, WPARAM wp, LPARAM lp) {
             if(!tracked){
                 tracked = true;
             }
-            break;
+            return true;
 
         case WM_MOUSELEAVE:
             tracked = false;
+            return true;
 
         case WM_LBUTTONDOWN:
             clicked = true;
-            break;
+            return true;
 
         case WM_LBUTTONUP:
             clicked = false;
-            break;
+            return true;
+
+        case WM_KEYDOWN:
+            if (wp == VK_ESCAPE) {
+                running = false;
+            }
+            return true;
 
         case WM_CLOSE:
         case WM_DESTROY:
             running = false;
-            break;
+            return true;
 
         default:
             return DefWindowProc(window, msg, wp, lp);
@@ -137,7 +146,7 @@ int CALLBACK WinMain(HINSTANCE inst, HINSTANCE prevInst, LPSTR args, int cmdshow
     windowClass.style = CS_OWNDC;
     windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
     windowClass.hInstance = inst;
-    windowClass.lpszClassName = "falling_sand";
+    windowClass.lpszClassName = _T("falling_sand");
     windowClass.lpfnWndProc = WindowProcedure;
 
     if (!RegisterClass(&windowClass)) {
@@ -146,10 +155,11 @@ int CALLBACK WinMain(HINSTANCE inst, HINSTANCE prevInst, LPSTR args, int cmdshow
 
     int winX = 400;
     int winY = 400;
+    int barOffset = 39; // FIXME: count with the window bar offset (solution: close by ESC and remove window bar)
     int scale = 5;
 
     // create a window
-    HWND window = CreateWindowEx(0, "falling_sand", "Falling Sand", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE, 0, 0, winX, winY, NULL, NULL, inst, NULL);
+    HWND window = CreateWindowEx(0, _T("falling_sand"), _T("Falling Sand"), WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE | WS_CAPTION, 0, 0, winX, winY + barOffset, NULL, NULL, inst, NULL);
     MSG msg = {}; // message to travel between user and application
 
     RECT windowPos = {};
@@ -186,8 +196,8 @@ int CALLBACK WinMain(HINSTANCE inst, HINSTANCE prevInst, LPSTR args, int cmdshow
 
         if (clicked && tracked) {
             mousePos = getMouse();
-            GetWindowRect(window, windowPos);
-            grid[parseInt((mousePos[1] - windowPos.top) / scale)][parseInt((mousePos[0] - windowPos.left) / scale)] = color;
+            GetWindowRect(window, &windowPos);
+            grid[(int)((mousePos[1] - windowPos.top) / scale)][(int)((mousePos[0] - windowPos.left) / scale)] = color;
         }
 
         spawn++;

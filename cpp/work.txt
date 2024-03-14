@@ -1,5 +1,0 @@
-TODO:
-    - compile it somehow
-    - test: run the app successfully
-    - test: mouse click to spawn
-    

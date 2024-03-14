@@ -1,0 +1,5 @@
+// generate build
+cmake -B <where to build> -S <location of CMakeList.txt>
+
+// build into binary
+cmake --build <location of build>
