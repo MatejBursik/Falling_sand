@@ -115,10 +115,13 @@ LRESULT CALLBACK WindowProcedure(HWND window, UINT msg, WPARAM wp, LPARAM lp) {
 
         case WM_MOUSELEAVE:
             tracked = false;
+            clicked = false;
             return true;
 
         case WM_LBUTTONDOWN:
-            clicked = true;
+            if(tracked){
+                clicked = true;
+            }
             return true;
 
         case WM_LBUTTONUP:
@@ -159,7 +162,7 @@ int CALLBACK WinMain(HINSTANCE inst, HINSTANCE prevInst, LPSTR args, int cmdshow
     int scale = 5;
 
     // create a window
-    HWND window = CreateWindowEx(0, _T("falling_sand"), _T("Falling Sand"), WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE | WS_CAPTION, 0, 0, winX, winY + barOffset, NULL, NULL, inst, NULL);
+    HWND window = CreateWindowEx(0, _T("falling_sand"), _T("Falling Sand"), WS_POPUP | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE, 0, 0, winX, winY, NULL, NULL, inst, NULL);
     MSG msg = {}; // message to travel between user and application
 
     RECT windowPos = {};
@@ -197,7 +200,11 @@ int CALLBACK WinMain(HINSTANCE inst, HINSTANCE prevInst, LPSTR args, int cmdshow
         if (clicked && tracked) {
             mousePos = getMouse();
             GetWindowRect(window, &windowPos);
-            grid[(int)((mousePos[1] - windowPos.top) / scale)][(int)((mousePos[0] - windowPos.left) / scale)] = color;
+            
+            if ((((int)((mousePos[1] - windowPos.top) / scale) >= 0)) && ((int)((mousePos[1] - windowPos.top) / scale) <= grid.size()-1) &&
+                ((int)((mousePos[0] - windowPos.left) / scale) >= 0) && ((int)((mousePos[0] - windowPos.left) / scale) <= grid[0].size()-1)) {
+                grid[(int)((mousePos[1] - windowPos.top) / scale)][(int)((mousePos[0] - windowPos.left) / scale)] = color;
+            }
         }
 
         spawn++;
