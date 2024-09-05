@@ -3,7 +3,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import javax.swing.*;
 
-public class Display extends JPanel implements ActionListener, MouseListener{
+public class Display extends JPanel implements ActionListener, MouseListener {
     private int width;
     private int height;
     private int scale = 5;
@@ -18,11 +18,12 @@ public class Display extends JPanel implements ActionListener, MouseListener{
     public Display(int width, int height) {
         this.width = width;
         this.height = height;
-        this.grid = new Functions().fillZeros(width, height);
+        this.grid = new Functions().fillZeros((int)width/scale, (int)height/scale);
         setPreferredSize(new Dimension(this.width, this.height));
         setBackground(Color.black);
+        setFocusable(true);
 
-        // Add mouse Listener
+        // Add Listeners
         addMouseListener(this);
 
         // Application loop
@@ -77,7 +78,7 @@ public class Display extends JPanel implements ActionListener, MouseListener{
         color ++;
     }
 
-    // Required methods for MouseListener, though the only one you care about is click
+    // Mouse
     public void mousePressed(MouseEvent e) {
         pressed = true;
     }

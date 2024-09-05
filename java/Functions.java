@@ -27,18 +27,18 @@ public class Functions {
 
         for (int y=0; y<grid.size(); y++) {
             for (int x=0; x<grid.get(0).size(); x++) {
-                if (grid.get(y).get(x) > 0) {
-                    if (y+1 < grid.size()){
-                        if (grid.get(y+1).get(x) == 0) {
+                if (grid.get(y).get(x) > 0) { // skip if 0
+                    if (y+1 < grid.size()){ // y would be under grid
+                        if (grid.get(y+1).get(x) == 0) { // space under is free
                             newGrid.get(y+1).set(x, grid.get(y).get(x));
-                        } else if (x+1 < grid.get(0).size() && dir == 1) {
-                            if (grid.get(y+1).get(x+1) == 0) {
+                        } else if (x+1 < grid.get(0).size() && dir == 1) { // check right
+                            if (grid.get(y+1).get(x+1) == 0) { // check right under
                                 newGrid.get(y+1).set(x+1, grid.get(y).get(x));
                             } else {
                                 newGrid.get(y).set(x, grid.get(y).get(x));
                             }
-                        } else if (x-1 >= 0 && dir == -1) {
-                            if (grid.get(y+1).get(x-1) == 0) {
+                        } else if (x-1 >= 0 && dir == -1) { // check left
+                            if (grid.get(y+1).get(x-1) == 0) { // check left under
                                 newGrid.get(y+1).set(x-1, grid.get(y).get(x));
                             } else {
                                 newGrid.get(y).set(x, grid.get(y).get(x));
