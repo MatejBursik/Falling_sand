@@ -34,7 +34,8 @@ public class Display extends JPanel implements ActionListener {
         for (int y=0; y<grid.size(); y++) {
             for (int x=0; x<grid.get(0).size(); x++) {
                 if (grid.get(y).get(x) > 0) {
-                    g.setColor(new Converter().HSLToRGB(grid.get(y).get(x)/360, 1f, 0.51f)); // error
+                    System.out.println(new Converter().HSLToRGB(grid.get(y).get(x), 1f, 0.5f) + " " +grid.get(y).get(x));
+                    g.setColor(new Converter().HSLToRGB(grid.get(y).get(x), 1f, 0.5f));
                     g.fillRect(x*scale, y*scale, scale, scale);
                 }
             }
