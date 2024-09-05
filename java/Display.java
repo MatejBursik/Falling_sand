@@ -3,7 +3,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import javax.swing.*;
 
-public class Display extends JPanel implements ActionListener {
+public class Display extends JPanel implements ActionListener, MouseListener{
     private int width;
     private int height;
     private int scale = 5;
@@ -12,14 +12,20 @@ public class Display extends JPanel implements ActionListener {
     Timer loop;
     private int spawn = 0;
     private int color = 0;
+    private boolean pressed = false;
+    Point mousePos;
 
-    Display(int width, int height) {
+    public Display(int width, int height) {
         this.width = width;
         this.height = height;
         this.grid = new Functions().fillZeros(width, height);
         setPreferredSize(new Dimension(this.width, this.height));
         setBackground(Color.black);
 
+        // Add mouse Listener
+        addMouseListener(this);
+
+        // Application loop
         loop = new Timer(20, this);
         loop.start();
     }
@@ -34,7 +40,6 @@ public class Display extends JPanel implements ActionListener {
         for (int y=0; y<grid.size(); y++) {
             for (int x=0; x<grid.get(0).size(); x++) {
                 if (grid.get(y).get(x) > 0) {
-                    System.out.println(new Converter().HSLToRGB(grid.get(y).get(x), 1f, 0.5f) + " " +grid.get(y).get(x));
                     g.setColor(new Converter().HSLToRGB(grid.get(y).get(x), 1f, 0.5f));
                     g.fillRect(x*scale, y*scale, scale, scale);
                 }
@@ -59,10 +64,27 @@ public class Display extends JPanel implements ActionListener {
         }
 
         // Spawn on click
+        if (pressed) {
+            mousePos = getMousePosition();
+            if (mousePos != null) {
+                grid.get((int)mousePos.y/scale).set((int)mousePos.x/scale, color);
+            }
+        }
 
         repaint();
 
         spawn ++;
         color ++;
     }
+
+    // Required methods for MouseListener, though the only one you care about is click
+    public void mousePressed(MouseEvent e) {
+        pressed = true;
+    }
+    public void mouseReleased(MouseEvent e) {
+        pressed = false;
+    }
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {}
 }
