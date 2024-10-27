@@ -7,3 +7,4 @@ Me attempting to do make a falling sand simulation in different programming lang
 - Python (PyGame)
 - C++ (Win32)
 - Java (Swing)
+- Rust () https://www.youtube.com/watch?v=1a7Xtg2RgEo
