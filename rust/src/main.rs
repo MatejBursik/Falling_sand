@@ -1,42 +1,32 @@
-use bevy::{prelude::*, sprite::{MaterialMesh2dBundle, Mesh2dHandle}, window::WindowResolution};
+mod constants;
+mod resources;
+mod setup;
+mod update_sand;
+mod update_texture;
+mod functions;
+
+use bevy::prelude::*;
+use constants::*;
+use resources::*;
+use setup::setup;
+use update_sand::update_sand;
+use update_texture::update_texture;
 
 fn main() {
     let mut app = App::new();
-    app.insert_resource(ClearColor(Color::linear_rgb(0.0, 0.0, 0.0)));
     app.add_plugins(DefaultPlugins.set(WindowPlugin {
         primary_window: Some(Window {
-            resolution: WindowResolution::new(400.0, 400.0),
+            resolution: (WIN_X as f32, WIN_Y as f32).into(),
             title: "Falling Sand".to_string(),
             ..default()
         }),
         ..default()
     }));
+    app.insert_resource(Grid::default());
+    app.insert_resource(SpawnTimer(Timer::from_seconds(0.2, TimerMode::Repeating)));
+    app.insert_resource(ColorState { hue: 0.0 });
     app.add_systems(Startup, setup);
+    app.add_systems(Update, update_sand);
+    app.add_systems(Update, update_texture);
     app.run();
-}
-
-fn setup(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-    windows: Query<&Window>
-) {
-    commands.spawn(Camera2dBundle::default());
-
-    // Create and spawn the red sand
-    let scale: f32 = 5.0;
-    let window = windows.single();
-    let window_width = window.width();
-    let window_height = window.height();
-
-    let x_position = -window_width / 2.0 + scale / 2.0;
-    let y_position = window_height / 2.0 - scale / 2.0;
-
-    let sand = Mesh2dHandle(meshes.add(Rectangle::new(scale, scale)));
-    commands.spawn(MaterialMesh2dBundle {
-        mesh: sand,
-        material: materials.add(Color::linear_rgb(1.0, 0.0, 0.0)),
-        transform: Transform::from_xyz(x_position, y_position, 0.0),
-        ..default()
-    });
 }
