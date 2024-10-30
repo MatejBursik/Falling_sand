@@ -1,13 +1,17 @@
 use bevy::prelude::*;
+use bevy::window::PrimaryWindow;
 use rand::Rng;
 use crate::resources::{Grid, SpawnTimer, ColorState};
-use crate::constants::{GRID_WIDTH, GRID_HEIGHT};
+use crate::constants::*;
+use crate::resources::MousePressed;
 
 pub fn update_sand(
+    q_window: Query<&Window, With<PrimaryWindow>>,
     mut grid: ResMut<Grid>,
     time: Res<Time>,
     mut timer: ResMut<SpawnTimer>,
-    mut color_state: ResMut<ColorState>
+    mut color_state: ResMut<ColorState>,
+    pressed: ResMut<MousePressed>
 ) {
     let mut new_grid = vec![vec![0.0; GRID_WIDTH]; GRID_HEIGHT];
     let mut rng = rand::thread_rng();
@@ -18,6 +22,20 @@ pub fn update_sand(
         color_state.hue = (color_state.hue + 1.0) % 360.0;
         new_grid[0][GRID_WIDTH / 10] = color_state.hue;
         new_grid[0][GRID_WIDTH / 2] = color_state.hue;
+    }
+
+    // Spawn on click
+    if pressed.state {
+        if let Ok(q_window) = q_window.get_single() {
+            if let Some(position) = q_window.cursor_position() {
+                let grid_x = (position.x / SCALE as f32) as usize;
+                let grid_y = (position.y / SCALE as f32) as usize;
+                
+                if grid_x < GRID_WIDTH && grid_y < GRID_HEIGHT {
+                    grid.cells[grid_y][grid_x] = color_state.hue;
+                }
+            }
+        }
     }
 
     // Update sand

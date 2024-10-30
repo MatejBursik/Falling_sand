@@ -3,6 +3,7 @@ mod resources;
 mod setup;
 mod update_sand;
 mod update_texture;
+mod handle_input;
 mod functions;
 
 use bevy::prelude::*;
@@ -11,6 +12,7 @@ use resources::*;
 use setup::setup;
 use update_sand::update_sand;
 use update_texture::update_texture;
+use handle_input::handle_input;
 
 fn main() {
     let mut app = App::new();
@@ -25,8 +27,10 @@ fn main() {
     app.insert_resource(Grid::default());
     app.insert_resource(SpawnTimer(Timer::from_seconds(0.2, TimerMode::Repeating)));
     app.insert_resource(ColorState { hue: 0.0 });
+    app.insert_resource(MousePressed { state: false });
     app.add_systems(Startup, setup);
     app.add_systems(Update, update_sand);
     app.add_systems(Update, update_texture);
+    app.add_systems(Update, handle_input);
     app.run();
 }

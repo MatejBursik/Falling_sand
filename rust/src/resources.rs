@@ -23,3 +23,8 @@ pub struct ColorState {
 
 #[derive(Component)]
 pub struct SandDisplay;
+
+#[derive(Resource)]
+pub struct MousePressed {
+    pub state: bool
+}
